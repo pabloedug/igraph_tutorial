@@ -1,0 +1,202 @@
+---
+title: "EL OBJETO GRAFO"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(igraph)
+library(igraphdata)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## INTRODUCCION
+
+### El objeto grafo 
+
+El **objeto grafo** es el que representa la red que queremos analizar.
+
+### Formas de generar el objeto grafo
+
+Existen distintas maneras de generar un objeto grafo. Mediante:  
+
+* **grafos teóricos**, que son aquellos que cumplen de manera determinista ciertas propiedades.  
+
+* **grafos estadísticos**, que son aquellos que se ajustan a una determinada distribución estadística.  
+
+* **grafos empíricos**, que son aquellos que se obtienen a partir de datos reales.  
+
+## GRAFOS TEORICOS
+
+Existen multitud de grafos teóricos, de los que aquí destacamos tres: el grafo completo, el grafo anillo y el grafo estrella.
+
+*Modifica el siguiente código para construir estos grafos teóricos (así como prueba a modificar el número de nodos), mediante las funciones make_*:
+
+```{r theoretic-graphs, exercise=TRUE, exercise.eval=TRUE}
+grafo <- make_full_graph(n = 15)
+plot(grafo)
+```
+
+```{r theoretic-graphs-hint}
+make_full_graph()
+make_ring()
+make_star()
+```
+
+
+```{r theoretic-graphs-quiz}
+quiz(caption = "",
+  question(allow_retry = TRUE,"Un grafo completo (full graph) es aquel en que",
+    answer("todos sus nodos están conectados entre sí", correct = TRUE),
+    answer("los nodos se configuran en forma de anillo, de forma que cada cual tiene exactamente dos vecinos"),
+    answer("uno y solo uno de los nodos tiene más de una conexión (con el resto de nodos)")
+  ),
+  question(allow_retry = TRUE,"Un grafo anillo (ring graph) es aquel en que",
+    answer("todos sus nodos están conectados entre sí"),
+    answer("los nodos se configuran en forma de anillo, de forma que cada cual tiene exactamente dos vecinos", correct = TRUE),
+    answer("uno y solo uno de los nodos tiene más de una conexión (con el resto de nodos)")
+  ),
+  question(allow_retry = TRUE,"Un grafo estrella (star graph) es aquel en que",
+    answer("todos sus nodos están conectados entre sí"),
+    answer("los nodos se configuran en forma de anillo, de forma que cada cual tiene exactamente dos vecinos"),
+    answer("uno y solo uno de los nodos tiene más de una conexión (con el resto de nodos)", correct = TRUE)
+  )
+)
+```
+
+## GRAFOS ESTADISTICOS
+
+### <a href="https://igraph.org/r/doc/erdos.renyi.game.html" target="_blank">Erdős–Rényi</a>
+
+El modelo **Erdős–Rényi** para grafos aleatorios (random graphs) es aquél en que, dado un número de nodos y enlaces, todos los grafos posibles son equiprobables; cada enlace tiene una probabilidad de existir independiente de los enlaces de su entorno.
+<br>*A continuación prueba a aumentar la probabilidad de que dos nodos cualesquiera estén conectados mediante el argumento "p.or.m."*
+
+```{r statistical-graphs-er, exercise=TRUE, exercise.eval=TRUE}
+grafo <- erdos.renyi.game(n = 20, p.or.m = 0.1)
+plot(grafo)
+```
+
+### <a href="https://igraph.org/r/doc/sample_pa.html" target="_blank">Conexión preferencial</a>
+
+El modelo de **conexión preferencial** (preferential attachment) es aquel que refleja la ventaja acumulativa de algunos nodos ("the rich get richer").
+<br>*A continuación prueba a aumentar la intensidad de conexión preferencial mediante el argumento "power".*
+
+```{r statistical-graphs-pl, exercise=TRUE, exercise.eval=TRUE}
+grafo <- sample_pa(n = 20, power = 1.5)
+plot(grafo)
+```
+
+### <a href="https://igraph.org/r/doc/sample_smallworld.html" target="_blank">Pequeño mundo</a>
+
+El modelo de **pequeño mundo** (small world, Watts & Strogatz) es aquel que refleja la presencia de grupos conectados localmente, que además están cerca del conjunto de la red gracias a las conexiones de unos pocos.
+<br>*A continuación prueba a modificar el número de nodos.*
+
+```{r statistical-graphs-sw, exercise=TRUE, exercise.eval=TRUE}
+grafo <- sample_smallworld(dim = 1, size = 50, nei = 2, p = 0.1)
+plot(grafo)
+```
+
+
+## GRAFOS EMPIRICOS
+
+Los grafos empíricos son aquellos que se crean a partir del registro de relaciones. Estas relaciones pueden importarse a igraph en tres formatos básicamente:
+
+- Matriz de adyacencia (adjacency matrix)
+
+- Lista de enlaces (edgelist)
+
+- Data frame
+
+- Ficheros externos
+
+### <a href="https://igraph.org/r/doc/graph_from_adjacency_matrix.html" target="_blank">Matriz de adyacencia</a>
+
+Cada elemento (i,j) de la matriz representa la relación entre los nodos i y j. Un 1 indica relación y un 0 ausencia de la misma (en vez de 1, puede contener los pesos de las relaciones). En el caso de tratarse de una red no dirigida, esta matriz es simétrica.
+<br>*A continuación prueba a modificar la matriz, de manera que el nodo 1 pase a relacionarse con todos los nodos (salvo consigo mismo).*
+
+```{r adyacency-matrix, exercise=TRUE, exercise.eval=TRUE}
+adj_mat <- matrix( 
+    c(0, 0, 0, 0,
+      1, 0, 1, 1,
+      1, 0, 0, 1,
+      0, 0, 1, 0), 
+    nrow=4,              
+    ncol=4,
+    byrow=TRUE)
+g <- graph_from_adjacency_matrix(adj_mat)
+plot(g)
+```
+
+### <a href="https://igraph.org/r/doc/graph_from_edgelist.html" target="_blank">Lista de enlaces</a>
+
+Lista de enlaces entre pares de nodos (tiene la ventaja de representar únicamente los enlaces existentes). La edgelist ha de ser una matriz con dos columnas (siendo la primera columna los nodos de origen y la segunda los nodos de destino, en aquellos grafos dirigidos).
+<br>*A continuación prueba a eliminar la última relación de la edgelist. ¿Qué le ocurre al grafo?*
+
+```{r edge-list, exercise=TRUE, exercise.eval=TRUE}
+el <- matrix(c(1,6, 
+               6,2, 
+               2,6, 
+               3,1,
+               3,2,
+               5,4,
+               6,4), ncol=2, byrow=TRUE)
+grafo <- graph_from_edgelist(el)
+plot(grafo)
+```
+
+
+### <a href="https://igraph.org/r/doc/graph_from_data_frame.html" target="_blank">Data frame</a>
+
+Se pueden configurar los enlaces y los nodos mediante dataframes:
+
+- Enlaces: dos primeras columnas contienen el origen y destino de los enlaces (igual que edgelist); resto de columnas se tratan como atributos de los enlaces (tipo de relación, por ejemplo).  
+- Nodos: primera columna contiene el nombre de los nodos; resto de columnas se tratan como atributos de los nodos (todo tipo de variables que los clasifiquen/caractericen). 
+
+A diferencia de con los dataframe, en caso de cargarse el grafo como edgelist o como matriz de adyacencia, los atributos de los enlaces y nodos habrán de agregarse desde igraph, operando directamente sobre el propio objeto grafo.
+
+### <a href="https://igraph.org/r/doc/read_graph.html" target="_blank">Importar objetos grafos de otros software</a>
+
+Se pueden cargar directamente grafos generados con varios software de redes (Gephi, Pajek...). Igraph entiende su formato.
+
+## PROPIEDADES BASICAS
+
+Una vez tenemos un grafo cargado, podemos comprobar sus propiedades básicas, como el número de nodos, el número de enlaces, así como si se trata de una red dirigida o no.
+
+```{r graph-properties, exercise=TRUE, exercise.eval=TRUE}
+data(enron)
+enron
+```
+
+*A continuación, intenta obtener mediante funciones de igraph las propiedades por las que se te pregunta más adelante, así como trata de localizar esta información en la salida anterior:*
+
+```{r graph-properties-metrics, exercise=TRUE, exercise.eval=TRUE}
+class(enron)
+```
+
+```{r graph-properties-metrics-hint}
+gorder()
+gsize()
+is.directed()
+```
+
+```{r graph-properties-metrics-quiz}
+quiz(caption = "",
+  question(allow_retry = TRUE,"¿Cuántos nodos tiene el grafo de Enron?",
+    answer("58 nodos"),
+    answer("693 nodos"),
+    answer("184 nodos",correct = TRUE)
+  ),
+  question(allow_retry = TRUE,"¿Cuántos enlaces tiene el grafo de Enron?",
+    answer("184 enlaces"),
+    answer("125,409 enlaces", correct = TRUE),
+    answer("726 enlaces")
+  ),
+  question(allow_retry = TRUE,"¿El grafo de Enron es dirigido o no dirigido?",
+    answer("es dirigido", correct = TRUE),
+    answer("es no dirigido"),
+    answer("no se puede saber")
+  )
+)
+```
