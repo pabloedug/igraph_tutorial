@@ -190,7 +190,7 @@ quiz(caption = "",
   ),
   question(allow_retry = TRUE,"¿Cuántos enlaces tiene el grafo de Enron?",
     answer("184 enlaces"),
-    answer("125,409 enlaces", correct = TRUE),
+    answer("125.409 enlaces", correct = TRUE),
     answer("726 enlaces")
   ),
   question(allow_retry = TRUE,"¿El grafo de Enron es dirigido o no dirigido?",
