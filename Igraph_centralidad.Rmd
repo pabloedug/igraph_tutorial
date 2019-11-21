@@ -78,9 +78,9 @@ quiz(caption = "",
     answer("no tiene sentido calcular el grado de salida, porque se trata de una red no dirigida", correct = TRUE)
   ),
   question(allow_retry = TRUE,"¿Cuanto vale el grado normalizado de de D?",
-    answer("0.44"),
-    answer("0.56"),
-    answer("0.67", correct = TRUE)
+    answer("0,44"),
+    answer("0,56"),
+    answer("0,67", correct = TRUE)
   )
 )
 ```
@@ -119,7 +119,7 @@ quiz(caption = "",
     answer("H", correct = TRUE)
   ),
   question(allow_retry = TRUE,"¿Qué valor toma ese máximo si se normaliza?",
-    answer("0.39", correct = TRUE),
+    answer("0,39", correct = TRUE),
     answer("0,49"),
     answer("0,64")
   ),
@@ -163,7 +163,7 @@ quiz(caption = "",
     answer("Las dos anteriores son correctas", correct = TRUE)
   ),
   question(allow_retry = TRUE,"¿Qué valor toma ese máximo si se normaliza?",
-    answer("0.39"),
+    answer("0,39"),
     answer("0,49"),
     answer("0,64", correct = TRUE)
   ),

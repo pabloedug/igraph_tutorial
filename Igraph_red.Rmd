@@ -153,9 +153,9 @@ degree(mode = )
 ```{r betweenness-centrality-quiz}
 quiz(caption = "",
   question(allow_retry = TRUE,"¿Cual es la densidad del grafo?",
-    answer("0.09", correct = TRUE),
-    answer("0.11"),
-    answer("0.21")
+    answer("0,09", correct = TRUE),
+    answer("0,11"),
+    answer("0,21")
   ),
   question(allow_retry = TRUE,"¿Cual es el grado promedio de salida?",
     answer("16.36", correct = TRUE),
@@ -163,7 +163,7 @@ quiz(caption = "",
     answer("30,04")
   ),
   question(allow_retry = TRUE,"¿Cual es el grado promedio de entrada?",
-    answer("16.36", correct = TRUE),
+    answer("16,36", correct = TRUE),
     answer("8,49"),
     answer("30,04")
   ),
@@ -178,9 +178,9 @@ quiz(caption = "",
     answer("100")
   ),
   question(allow_retry = TRUE,"¿Cual es la reciprocidad de la red?",
-    answer("0.21"),
-    answer("0.61", correct = TRUE),
-    answer("0.82")
+    answer("0,21"),
+    answer("0,61", correct = TRUE),
+    answer("0,82")
   )
 )
 ```
@@ -188,89 +188,48 @@ quiz(caption = "",
 
 ## ESTRUCTURA
 
-coeficiente de clustering, componentes, etc. distribución de grado
+Finalmente, existen medidas y análisis que nos permiten entender la estructura de la red en su conjunto. Destacamos tres:
 
-Si consideramos las distancias geodésicas (esto es, las distancias de los caminos mínimos) de un nodo al resto de nodos de la red, la suma de estas es una medida de cuán lejos está del conjunto. Por ello, el valor inverso de esta suma es la medida de cercanía.
+* **centralización de grado**: es una medida de si los nodos tienen valores parecidos de grado, o bien hay unos pocos nodos que destacan sobre el resto, tomando respectivamente valores de 0 y 1 (en los extremos). Se puede obtener también del resto de medidas de centralidad (betweenness...)
 
-La medida normalizada es la resultante de multiplicarla por *n*-1 (siendo *n* el número de nodos). Así, el máximo de cercanía sería de 1, lo que equivale estar a un paso del resto de la red.
+* **componentes conexas**: se trata de extraer subgrafos en que existe conectividad entre sus miembros (admite distintos niveles de exigencia en la conectividad, si se trata de grafos dirigidos).
 
+* **transitividad**: también conocido como coeficiente de clustering, mide en qué medida, en el conjunto de la red, los vecinos de un nodo están conectados también entre sí, formando un triángulo.
 
-```{r echo=FALSE}
-data(kite)
-plot(kite)
-```
-
+Vamos a trabajar con el grafo de Enron simplificado en el apartado anterior.
 *Modifica el siguiente código para responder a las cuestiones de más abajo*:
 
-```{r closeness-centrality, exercise=TRUE, exercise.eval=TRUE}
-kite
+```{r structure-enron, exercise=TRUE, exercise.eval=TRUE}
+enron_simplified
 ```
 
-```{r closeness-centrality-hint}
-closeness(,normalized = FALSE)
-sort(,decreasing = TRUE)
+```{r structure-enron-hint}
+centr_degree()
+components()
+transitivity()
 ```
-
 
 ```{r closeness-centrality-quiz}
 quiz(caption = "",
-  question(allow_retry = TRUE,"¿Quién tiene la mayor intermediación?",
-    answer("F"),
-    answer("G"),
-    answer("Las dos anteriores son correctas", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cuánto vale la centralización del grado de entrada?",
+    answer("0,12"),
+    answer("0,24", correct = TRUE),
+    answer("0,46")
   ),
-  question(allow_retry = TRUE,"¿Qué valor toma ese máximo si se normaliza?",
-    answer("0.39"),
-    answer("0,49"),
-    answer("0,64", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cuánto vale la centralización del grado de entrada?",
+    answer("0,12"),
+    answer("0,24", correct = TRUE),
+    answer("0,46", correct = TRUE)
   ),
-  question(allow_retry = TRUE,"¿Qué valor tomaría la cercanía normalizada del hub -o nodo central- en un grafo de estrella?",
-    answer("0"),
-    answer("1", correct = TRUE),
-    answer("Depende del número de nodos")
-  )
-)
-```
-
-## COMPARATIVA
-
-Una vez hemos practicado con los conceptos y cálculo de grado, intermediación y cercanía, vamos a reflexionar sobre algunas de sus diferencias. En el grafo siguiente, con el que estamos trabajando, se han destacado en verde, rojo y azul, los nodos que obtienen puntuaciones máximas, respectivamente, en <span style="color:green;">grado<span/>, <span style="color:red;">intermediación<span/> y <span style="color:blue;">cercanía<span/>.
-
-```{r echo=FALSE}
-data(kite)
-grado <- degree(graph = kite)
-intermediacion <- betweenness(graph = kite)
-cercania <- closeness(graph = kite)
-color <- rep(NA, vcount(kite))
-color[grado==max(grado)] <- "green"
-color[intermediacion==max(intermediacion)] <- "red"
-color[cercania==max(cercania)] <- "blue"
-plot(kite,vertex.color=color)
-```
-
-*Responde a las siguientes preguntas sobre las diferencias entre estas tres medidas de centralidad:*
-
-```{r centrality-measures-comparison-quiz}
-quiz(caption = "",
-  question(allow_retry = TRUE,"¿Qué medida/s tiene/n en cuenta la estructura global de la red?",
-    answer("grado"),
-    answer("intermediación", correct = TRUE),
-    answer("cercanía", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cuántas componentes (débiles) tiene el grafo?",
+    answer("1"),
+    answer("3", correct = TRUE),
+    answer("11")
   ),
-  question(allow_retry = TRUE,"¿Qué medida/s admite/n que nodos con pocos contactos directos aparezcan destacados?",
-    answer("grado"),
-    answer("intermediación", correct = TRUE),
-    answer("cercanía", correct = TRUE)
-  ),
-  question(allow_retry = TRUE,"¿Qué medida/s admite/n normalización de las puntuaciones originales?",
-    answer("grado", correct = TRUE),
-    answer("intermediación", correct = TRUE),
-    answer("cercanía", correct = TRUE)
-  ),
-  question(allow_retry = TRUE,"¿Qué medida/s admite/n variaciones en función de si la red es o no dirigida?",
-    answer("grado", correct = TRUE),
-    answer("intermediación", correct = TRUE),
-    answer("cercanía", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cuánto vale la transitividad del grafo?",
+    answer("0,12"),
+    answer("0,37", correct = TRUE),
+    answer("0.45")
   )
 )
 ```
