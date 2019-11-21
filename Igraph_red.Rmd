@@ -38,7 +38,7 @@ Entre las medidas de distancia, se encuentran las siguientes:
 
 * **distancia media**, que es la distancia media a la que están los pares de nodos entre sí.
 
-Vamos a volver a trabajar con el grafo de *kite*:
+Vamos a volver a trabajar, en primer lugar, con el grafo de *kite*:
 
 ```{r echo=FALSE}
 plot(kite)
@@ -95,47 +95,92 @@ quiz(caption = "",
 
 ## CONECTIVIDAD
 
-En primer lugar debemos entender el concepto de **camino mínimo** (shortest path). El camino mínimo entre dos nodos es el camino más corto entre ambos. En el grafo de más abajo, F puede alcanzar a H por distintos caminos, pero el más corto (dos pasos) es el que pasa por G.
+Las medidas de conectividad son aquellas que permiten entender cómo de conectada está la red en su conjunto. Destacamos aquí tres medidas:
 
-Si calculamos todos los caminos mínimos entre todos los pares de nodos, la intermediación de un nodo se define como la cantidad de esos caminos mínimos 
-en los que está presente.
+* **densidad**: se trata del número de enlaces existentes, dividido por el número de enlaces posibles.
 
-Al igual que ocurre con el grado, existe una medida normalizada, que consiste en dividir el valor anterior entre el total de caminos mínimos existentes entre todos los pares de nodos. En este caso el valor oscila entre 0 (no está presente en ningún camino mínimo) y 1 (está presente en todos los caminos mínimos).
+* **grado medio & grado máximo**: puede serlo del grado de entrada o de salida, si se trata de una red dirigida.
 
+* **reciprocidad**: en redes dirigidas, esta es una medida que permite conocer en qué proporción las conexiones son recíprocas.
 
-```{r echo=FALSE}
-data(kite)
-plot(kite)
+A continuación, vamos a trabajar con el grafo de Enron, que es un grafo dirigido.
+
+En primer lugar, vamos a ilustrar un procesamiento que debemos hacer del grafo de Enron, muy habitual en todos aquellos grafos en que existen múltiples enlaces.
+
+En el grafo original, cada vez que un nodo se relaciona con otro nodo, se crea el enlace correspondiente (en el caso de Enron, tenemos un total de `r format(gsize(enron),big.mark   = ".")` enlaces entre los `r gorder(enron)` nodos).
+
+Veamos por ejemplo a continuación los enlaces de salida (emails enviados) y de entrada (emails recibidos) que tiene el nodo 1.
+
+```{r connectivity-enron-raw-node1-out, echo=TRUE}
+adjacent_vertices(enron, 1, mode = c("out"))
 ```
 
-*Modifica el siguiente código para responder a las cuestiones de más abajo*:
-
-```{r betweenness-centrality, exercise=TRUE, exercise.eval=TRUE}
-kite
+```{r connectivity-enron-raw-node1-in, echo=TRUE}
+adjacent_vertices(enron, 1, mode = c("in"))
 ```
 
-```{r betweenness-centrality-hint}
-betweenness(,normalized = FALSE)
-sort(,decreasing = TRUE)
+Lo que nos suele interesar es que el enlace entre cada par de nodos sea único, y crear un atributo del enlace (por ejemplo el peso) que permita capturar el número de veces que se produce. Para ello utilizamos la siguiente función:
+
+```{r connectivity-enron-simplify, echo=TRUE}
+E(enron)$weight <- 1
+enron_simplified <- simplify(enron)
+```
+
+Ahora el grafo de Enron ha pasado a tener `r format(gsize(enron_simplified),big.mark   = ".")` enlaces entre los `r gorder(enron_simplified)` nodos. Vamos a volver a ver los enlaces salientes y entrantes del nodo 1, que ahora tienen mucho más sentido:
+
+```{r connectivity-enron-simplified-node1-out, echo=TRUE}
+adjacent_vertices(enron_simplified, 1, mode = c("out"))
+```
+
+```{r connectivity-enron-simplified-node1-in, echo=TRUE}
+adjacent_vertices(enron_simplified, 1, mode = c("in"))
+```
+
+*Modifica el siguiente código para responder a las cuestiones de más abajo. Vamos a trabajar con el grafo de Enron simplificado*:
+
+```{r connectivity-enron, exercise=TRUE, exercise.eval=TRUE}
+enron_simplified
+```
+
+```{r connectivity-enron-hint}
+edge_density()
+mean()
+max()
+degree(mode = )
 ```
 
 
 ```{r betweenness-centrality-quiz}
 quiz(caption = "",
-  question(allow_retry = TRUE,"¿Quién tiene la mayor intermediación?",
-    answer("F"),
-    answer("G"),
-    answer("H", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cual es la densidad del grafo?",
+    answer("0.09", correct = TRUE),
+    answer("0.11"),
+    answer("0.21")
   ),
-  question(allow_retry = TRUE,"¿Qué valor toma ese máximo si se normaliza?",
-    answer("0.39", correct = TRUE),
-    answer("0,49"),
-    answer("0,64")
+  question(allow_retry = TRUE,"¿Cual es el grado promedio de salida?",
+    answer("16.36", correct = TRUE),
+    answer("8,49"),
+    answer("30,04")
   ),
-  question(allow_retry = TRUE,"¿Existen nodos con una intermediación de 0?",
-    answer("No"),
-    answer("Si, dos nodos"),
-    answer("Si, tres nodos", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cual es el grado promedio de entrada?",
+    answer("16.36", correct = TRUE),
+    answer("8,49"),
+    answer("30,04")
+  ),
+  question(allow_retry = TRUE,"¿Cual es el grado máximo de salida?",
+    answer("30"),
+    answer("60"),
+    answer("100", correct = TRUE)
+  ),
+  question(allow_retry = TRUE,"¿Cual es el grado máximo de entrada?",
+    answer("30"),
+    answer("60", correct = TRUE),
+    answer("100")
+  ),
+  question(allow_retry = TRUE,"¿Cual es la reciprocidad de la red?",
+    answer("0.21"),
+    answer("0.61", correct = TRUE),
+    answer("0.82")
   )
 )
 ```
