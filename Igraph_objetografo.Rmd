@@ -9,6 +9,7 @@ library(learnr)
 library(igraph)
 library(igraphdata)
 knitr::opts_chunk$set(echo = FALSE)
+data(enron)
 ```
 
 
@@ -165,7 +166,6 @@ Se pueden cargar directamente grafos generados con varios software de redes (Gep
 Una vez tenemos un grafo cargado, podemos comprobar sus propiedades básicas, como el número de nodos, el número de enlaces, así como si se trata de una red dirigida o no.
 
 ```{r graph-properties, exercise=TRUE, exercise.eval=TRUE}
-data(enron)
 enron
 ```
 

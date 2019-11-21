@@ -1,5 +1,5 @@
 ---
-title: "CENTRALIDAD"
+title: "MEDIDAS DE RED"
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
@@ -10,38 +10,35 @@ library(igraph)
 library(igraphdata)
 knitr::opts_chunk$set(echo = FALSE)
 data(kite)
+data(enron)
 ```
 
 
 ## INTRODUCCION
 
-### Medidas de centralidad 
+### Medidas de red 
 
-Las medidas de centralidad nos permiten establecer la importancia de un nodo en la red, en base a su posición, y/o número de contactos, y/o calidad de los mismos. Normalmente se va a traducir en acceso a información/recursos y/o capacidad de influencia.
+Además de conocer cómo se comportan en la red los individuos (cual es su posición e importancia, mediante las medidas de centralidad), es muchas veces necesario conocer el comportamiento y estructura de la red en su conjunto.
 
 ### Resumen de medidas
 
-Existen multitud de medidas de centralidad, de las que aquí vamos a destacar las tres clásicas:
+Existen distintos tipos de medidas de red, basadas en:
 
-* **grado**, que es el número de conexiones directas que tiene el nodo.  
+* **distancia**: cómo de cerca o lejos se encuentran los miembros de la red.  
 
-* **intermediación**, que es la medida en que el nodo está entre otros nodos (siendo "obligado" pasar por él).  
+* **conectividad**: cómo de conectados en su conjunto.  
 
-* **cercanía**, que es la medida en que un nodo está a pocos pasos del resto.
+* **estructura**: cómo se organizan las relaciones.
 
-## GRADO
+## DISTANCIA
 
-En el caso de tratarse de una red dirigida (en caso de no serlo, solo hay una medida), se distingue:
+Entre las medidas de distancia, se encuentran las siguientes:
 
-* **grado de entrada**, que es el número de conexiones directas entrantes.
+* **diámetro**, que es la longitud del camino mínimo más largo de la red.
 
-* **grado de salida**, que es el número de conexiones directas salientes.
+* **distancia media**, que es la distancia media a la que están los pares de nodos entre sí.
 
-* **grado total**, que es la suma de los dos anteriores.
-
-Por otra parte, el grado normalizado de una red no dirigida (o los normalizados de entrada y salida de una red dirigida), son el resultado de dividir los anteriores entre *n*-1 (siendo *n* el número de nodos existentes en la componente conexa a la que pertenece el nodo del que se quiere calcular su grado). Así, el valor oscila entre 0 (ninguna conexión) y 1 (el máximo de conexiones posibles en esa red).
-
-Trabajamos con el siguiente grafo, en que grado, intermediación y cercanía permiten destacar a nodos diferentes:
+Vamos a volver a trabajar con el grafo de *kite*:
 
 ```{r echo=FALSE}
 plot(kite)
@@ -49,43 +46,54 @@ plot(kite)
 
 *Modifica el siguiente código para responder a las cuestiones de más abajo*:
 
-```{r degree-centrality, exercise=TRUE, exercise.eval=TRUE}
+```{r distance-kite, exercise=TRUE, exercise.eval=TRUE}
 kite
 ```
 
-```{r degree-centrality-hint}
-degree(,normalized = FALSE)
-sort(,decreasing = TRUE)
-mean()
+```{r distance-kite-hint}
+diameter(,normalized = FALSE)
+mean_distance()
 ```
 
 
-```{r degree-centrality-quiz}
+```{r distance-kite-quiz}
 quiz(caption = "",
-  question(allow_retry = TRUE,"¿Quién tiene el mayor grado?",
-    answer("D", correct = TRUE),
-    answer("F"),
-    answer("G")
-  ),
-  question(allow_retry = TRUE,"¿Cuanto es el grado promedio?",
-    answer("3,6", correct = TRUE),
-    answer("4,2"),
-    answer("2,2")
-  ),
-  question(allow_retry = TRUE,"¿Cuanto vale el grado de salida de D?",
-    answer("4"),
+  question(allow_retry = TRUE,"¿Cual es el diámetro del grafo?",
+    answer("4", correct = TRUE),
     answer("5"),
-    answer("no tiene sentido calcular el grado de salida, porque se trata de una red no dirigida", correct = TRUE)
+    answer("6")
   ),
-  question(allow_retry = TRUE,"¿Cuanto vale el grado normalizado de de D?",
-    answer("0.44"),
-    answer("0.56"),
-    answer("0.67", correct = TRUE)
+  question(allow_retry = TRUE,"¿Cual es la distancia media?",
+    answer("1,98", correct = TRUE),
+    answer("1,23"),
+    answer("2,39")
   )
 )
 ```
 
-## INTERMEDIACION
+*Vamos a hacer ahora lo propio con el grafo de Enron*:
+
+```{r distance-enron, exercise=TRUE, exercise.eval=TRUE}
+enron
+```
+
+```{r distance-enron-quiz}
+quiz(caption = "",
+  question(allow_retry = TRUE,"¿Cual es el diámetro del grafo?",
+    answer("4"),
+    answer("5"),
+    answer("6", correct = TRUE)
+  ),
+  question(allow_retry = TRUE,"¿Cual es la distancia media?",
+    answer("1,98"),
+    answer("1,23"),
+    answer("2,39", correct = TRUE)
+  )
+)
+```
+
+
+## CONECTIVIDAD
 
 En primer lugar debemos entender el concepto de **camino mínimo** (shortest path). El camino mínimo entre dos nodos es el camino más corto entre ambos. En el grafo de más abajo, F puede alcanzar a H por distintos caminos, pero el más corto (dos pasos) es el que pasa por G.
 
@@ -96,6 +104,7 @@ Al igual que ocurre con el grado, existe una medida normalizada, que consiste en
 
 
 ```{r echo=FALSE}
+data(kite)
 plot(kite)
 ```
 
@@ -132,7 +141,9 @@ quiz(caption = "",
 ```
 
 
-## CERCANIA
+## ESTRUCTURA
+
+coeficiente de clustering, componentes, etc. distribución de grado
 
 Si consideramos las distancias geodésicas (esto es, las distancias de los caminos mínimos) de un nodo al resto de nodos de la red, la suma de estas es una medida de cuán lejos está del conjunto. Por ello, el valor inverso de esta suma es la medida de cercanía.
 
@@ -140,6 +151,7 @@ La medida normalizada es la resultante de multiplicarla por *n*-1 (siendo *n* el
 
 
 ```{r echo=FALSE}
+data(kite)
 plot(kite)
 ```
 
@@ -180,6 +192,7 @@ quiz(caption = "",
 Una vez hemos practicado con los conceptos y cálculo de grado, intermediación y cercanía, vamos a reflexionar sobre algunas de sus diferencias. En el grafo siguiente, con el que estamos trabajando, se han destacado en verde, rojo y azul, los nodos que obtienen puntuaciones máximas, respectivamente, en <span style="color:green;">grado<span/>, <span style="color:red;">intermediación<span/> y <span style="color:blue;">cercanía<span/>.
 
 ```{r echo=FALSE}
+data(kite)
 grado <- degree(graph = kite)
 intermediacion <- betweenness(graph = kite)
 cercania <- closeness(graph = kite)
