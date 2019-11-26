@@ -11,6 +11,9 @@ library(igraphdata)
 knitr::opts_chunk$set(echo = FALSE)
 data(kite)
 data(enron)
+# making enron_simplified to be available later:
+E(enron)$weight <- 1
+enron_simplified <- simplify(enron)
 ```
 
 
@@ -121,7 +124,7 @@ adjacent_vertices(enron, 1, mode = c("in"))
 
 Lo que nos suele interesar es que el enlace entre cada par de nodos sea único, y crear un atributo del enlace (por ejemplo el peso) que permita capturar el número de veces que se produce. Para ello utilizamos la siguiente función:
 
-```{r connectivity-enron-simplify, echo=TRUE}
+```{r connectivity-enron-simplify, echo=TRUE,results='asis'}
 E(enron)$weight <- 1
 enron_simplified <- simplify(enron)
 ```
@@ -147,6 +150,7 @@ edge_density()
 mean()
 max()
 degree(mode = )
+reciprocity()
 ```
 
 
@@ -216,9 +220,9 @@ quiz(caption = "",
     answer("0,24", correct = TRUE),
     answer("0,46")
   ),
-  question(allow_retry = TRUE,"¿Cuánto vale la centralización del grado de entrada?",
+  question(allow_retry = TRUE,"¿Cuánto vale la centralización del grado de salida?",
     answer("0,12"),
-    answer("0,24", correct = TRUE),
+    answer("0,24"),
     answer("0,46", correct = TRUE)
   ),
   question(allow_retry = TRUE,"¿Cuántas componentes (débiles) tiene el grafo?",

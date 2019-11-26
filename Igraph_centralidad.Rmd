@@ -157,7 +157,7 @@ sort(,decreasing = TRUE)
 
 ```{r closeness-centrality-quiz}
 quiz(caption = "",
-  question(allow_retry = TRUE,"¿Quién tiene la mayor intermediación?",
+  question(allow_retry = TRUE,"¿Quién tiene la mayor cercanía?",
     answer("F"),
     answer("G"),
     answer("Las dos anteriores son correctas", correct = TRUE)
